@@ -79,6 +79,43 @@ namespace SolutionTest
 
             }
         }
+        [TestMethod]
+        [TestTraits(Trait.Positive)]
+        public void GetSingleCustomerByIdentifierUsingOutParameter()
+        {
+            // arrange
+            var ops = new DataOperations();
+            var id = 14;
+            // act
+            if (ops.CustomersSingleByOutParameter(id,out var customer))
+            {
+                Assert.IsTrue(customer.CompanyName == "Consolidated Holdings");
+            }
+            else
+            {
+                Assert.IsTrue(1== 0, $"Expected to find customer with id of {id}");
+            }
+        }
+        /// <summary>
+        /// Validate no customer found and handled properly.
+        /// </summary>
+        [TestMethod]
+        [TestTraits(Trait.Negative)]
+        public void GetSingleCustomerByIdentifierUsingOutParameterNoCustomerFound()
+        {
+            // arrange
+            var ops = new DataOperations();
+            var id = 999;
+            // act
+            if (ops.CustomersSingleByOutParameterNoCustomer(id, out var customer))
+            {
+                Assert.IsTrue(customer.CompanyName == "Consolidated Holdings");
+            }
+            else
+            {
+                Assert.IsTrue(customer == null,"Expected customer to be null");
+            }
+        }
         /// <summary>
         /// Validate data is returned in a list using out parameter where
         /// the exception assert is done on the value returned on the method call.

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BackEndLibrary
 {
-    public class DataOperations :BaseSqlServerConnections
+    public class DataOperations : BaseSqlServerConnections
     {
         public DataOperations()
         {
@@ -155,6 +155,109 @@ namespace BackEndLibrary
                                 Country = reader.GetString(7),
                                 Phone = reader.GetString(8)
                             });
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        mHasException = true;
+                        mLastException = e;
+                    }
+                }
+            }
+
+            return IsSuccessFul;
+        }
+        public bool CustomersSingleByOutParameter(int pId, out Customers Customer)
+        {
+            mHasException = false;
+
+            Customer = new Customers();
+
+            var selectStatement = "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
+                                  "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
+                                  "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
+                                  "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier " +
+                                  "WHERE cust.CustomerIdentifier = @Id";
+
+
+            using (var cn = new SqlConnection() { ConnectionString = ConnectionString })
+            {
+                using (var cmd = new SqlCommand() { Connection = cn, CommandText = selectStatement })
+                {
+                    try
+                    {
+                        cmd.Parameters.AddWithValue("@Id", pId);
+                        cn.Open();
+                        var reader = cmd.ExecuteReader();
+                        reader.Read();
+                        if (reader.HasRows)
+                        {
+                            Customer.CustomerIdentifier = reader.GetInt32(0);
+                            Customer.CompanyName = reader.GetString(1);
+                            Customer.ContactName = reader.GetString(2);
+                            Customer.ContactTitle = reader.GetString(3);
+                            Customer.Street = reader.GetString(4);
+                            Customer.City = reader.GetString(5);
+                            Customer.PostalCode = reader.GetString(6);
+                            Customer.Country = reader.GetString(7);
+                            Customer.Phone = reader.GetString(8);                            
+                        }
+                        else
+                        {
+                            return false;                            
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        mHasException = true;
+                        mLastException = e;
+                    }
+                }
+            }
+
+            return IsSuccessFul;
+        }
+        public bool CustomersSingleByOutParameterNoCustomer(int pId, out Customers Customer)
+        {
+            mHasException = false;
+            Customer = new Customers();
+
+
+            var selectStatement = "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
+                                  "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
+                                  "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
+                                  "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier " +
+                                  "WHERE cust.CustomerIdentifier = @Id";
+
+
+            using (var cn = new SqlConnection() { ConnectionString = ConnectionString })
+            {
+                using (var cmd = new SqlCommand() { Connection = cn, CommandText = selectStatement })
+                {
+                    try
+                    {
+                        cmd.Parameters.AddWithValue("@Id", pId);
+                        cn.Open();
+                        var reader = cmd.ExecuteReader();
+                        reader.Read();
+                        if (reader.HasRows)
+                        {                           
+                            Customer.CustomerIdentifier = reader.GetInt32(0);
+                            Customer.CompanyName = reader.GetString(1);
+                            Customer.ContactName = reader.GetString(2);
+                            Customer.ContactTitle = reader.GetString(3);
+                            Customer.Street = reader.GetString(4);
+                            Customer.City = reader.GetString(5);
+                            Customer.PostalCode = reader.GetString(6);
+                            Customer.Country = reader.GetString(7);
+                            Customer.Phone = reader.GetString(8);
+                        }
+                        else
+                        {
+                            Customer = null;
+                            return false;
                         }
 
                     }

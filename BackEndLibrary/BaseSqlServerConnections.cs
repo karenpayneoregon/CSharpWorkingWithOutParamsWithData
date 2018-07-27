@@ -1,6 +1,9 @@
-﻿namespace BackEndLibrary 
+﻿using BackEndLibrary.Interfaces;
+
+namespace BackEndLibrary 
 {
-    public class BaseSqlServerConnections : BaseExceptionsHandler
+    public class BaseSqlServerConnections : BaseExceptionsHandler, IConnection
+
     {
         /// <summary>
         /// This points to your database server

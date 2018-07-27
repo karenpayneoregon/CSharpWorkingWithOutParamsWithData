@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace BackEndLibrary
 {
+    /// <summary>
+    /// Contains methods to return data, some methods are setup for failure
+    /// to demonstrate how succcess and failures can be handled.
+    /// </summary>
     public class DataOperations : BaseSqlServerConnections
     {
         public DataOperations()
@@ -23,10 +27,12 @@ namespace BackEndLibrary
             mHasException = false;
 
             var dt = new DataTable();
-            const string selectStatement = "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +  
-                                           "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " + 
-                                           "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " + 
-                                           "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier;";
+
+            const string selectStatement = 
+                "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +  
+                "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " + 
+                "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " + 
+                "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier;";
 
 
             using (var cn = new SqlConnection() { ConnectionString = ConnectionString })
@@ -51,18 +57,19 @@ namespace BackEndLibrary
         /// <summary>
         /// Using C#7 Out parameter to return data from a database table into a DataTable.
         /// </summary>
-        /// <param name="dtCustomers"></param>
-        /// <returns></returns>
+        /// <param name="dtCustomers">DataTable</param>
+        /// <returns>True when DataTable is loaded, false on failure</returns>
         public bool Customers2(out DataTable dtCustomers)
         {
             mHasException = false;
 
             dtCustomers = new DataTable();
 
-            const string selectStatement = "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
-                                           "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
-                                           "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
-                                           "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier;";
+            const string selectStatement = 
+                "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
+                "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
+                "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
+                "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier;";
 
 
             using (var cn = new SqlConnection() { ConnectionString = ConnectionString })
@@ -84,6 +91,12 @@ namespace BackEndLibrary
 
             return IsSuccessFul;
         }
+        /// <summary>
+        /// Given an invalid column/field name this method will throw an exception
+        /// which in turn returns false. To learn what happen use <see cref="BaseExceptionsHandler.LastExceptionMessage"/>
+        /// </summary>
+        /// <param name="dtCustomers">DataTable which in this case will never load.</param>
+        /// <returns>Hardwired to return false</returns>
         public bool CustomersWithError2(out DataTable dtCustomers)
         {
             mHasException = false;
@@ -91,10 +104,11 @@ namespace BackEndLibrary
             dtCustomers = new DataTable();
 
             // using a invalid fieldname
-            const string selectStatement = "SELECT cust.CustomerIdentifer,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
-                                           "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
-                                           "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
-                                           "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier;";
+            const string selectStatement = 
+                "SELECT cust.CustomerIdentifer,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
+                "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
+                "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
+                "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier;";
 
 
             using (var cn = new SqlConnection() { ConnectionString = ConnectionString })
@@ -119,18 +133,19 @@ namespace BackEndLibrary
         /// <summary>
         /// Using C#7 Out parameter to return data from a database table into a list.
         /// </summary>
-        /// <param name="Customers"></param>
-        /// <returns></returns>
-        public bool Customers3(out List<Customers> Customers)
+        /// <param name="Customers">list of customers</param>
+        /// <returns>true on success, false on failure</returns>
+        public bool Customers3(out List<Customer> Customers)
         {
             mHasException = false;
 
-            Customers = new List<Customers>();
+            Customers = new List<Customer>();
 
-            var selectStatement = "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
-                                  "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
-                                  "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
-                                  "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier;";
+            const string selectStatement = 
+                "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
+                "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
+                "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
+                "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier;";
 
 
             using (var cn = new SqlConnection() { ConnectionString = ConnectionString })
@@ -143,7 +158,7 @@ namespace BackEndLibrary
                         var reader = cmd.ExecuteReader();
                         while (reader.Read())
                         {
-                            Customers.Add(new Customers()
+                            Customers.Add(new Customer()
                             {
                                 CustomerIdentifier = reader.GetInt32(0),
                                 CompanyName = reader.GetString(1),
@@ -168,17 +183,24 @@ namespace BackEndLibrary
 
             return IsSuccessFul;
         }
-        public bool CustomersSingleByOutParameter(int pId, out Customers Customer)
+        /// <summary>
+        /// Get a single <see cref="Customer"/> by primary key
+        /// </summary>
+        /// <param name="pId"></param>
+        /// <param name="Customer"></param>
+        /// <returns></returns>
+        public bool CustomersSingleByOutParameter(int pId, out Customer Customer)
         {
             mHasException = false;
 
-            Customer = new Customers();
+            Customer = new Customer();
 
-            var selectStatement = "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
-                                  "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
-                                  "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
-                                  "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier " +
-                                  "WHERE cust.CustomerIdentifier = @Id";
+            const string selectStatement = 
+                "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
+                "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
+                "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
+                "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier " +
+                "WHERE cust.CustomerIdentifier = @Id";
 
 
             using (var cn = new SqlConnection() { ConnectionString = ConnectionString })
@@ -219,17 +241,24 @@ namespace BackEndLibrary
 
             return IsSuccessFul;
         }
-        public bool CustomersSingleByOutParameterNoCustomer(int pId, out Customers Customer)
+        /// <summary>
+        /// Rigged to fail on getting a customer
+        /// </summary>
+        /// <param name="pId"></param>
+        /// <param name="Customer"></param>
+        /// <returns></returns>
+        public bool CustomerSingleByOutParameterNoCustomer(int pId, out Customer Customer)
         {
             mHasException = false;
-            Customer = new Customers();
+            Customer = new Customer();
 
 
-            var selectStatement = "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
-                                  "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
-                                  "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
-                                  "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier " +
-                                  "WHERE cust.CustomerIdentifier = @Id";
+            const string selectStatement = 
+                "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
+                "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
+                "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
+                "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier " +
+                "WHERE cust.CustomerIdentifier = @Id";
 
 
             using (var cn = new SqlConnection() { ConnectionString = ConnectionString })
@@ -271,6 +300,13 @@ namespace BackEndLibrary
 
             return IsSuccessFul;
         }
+        /// <summary>
+        /// Retrieve contact name and title by primary key
+        /// </summary>
+        /// <param name="pId">Customer primary key</param>
+        /// <param name="ContactName"><see cref="Customer.ContactName"/> for pId</param>
+        /// <param name="ContactTitle"><see cref="Customer.ContactTitle"/> for pId</param>
+        /// <returns>True if found, false if not found.</returns>
         public bool CustomersContactNameAndTitleByOutParameterDiscard(int pId, out string ContactName, out string ContactTitle)
         {
             mHasException = false;
@@ -278,11 +314,12 @@ namespace BackEndLibrary
             ContactName = "";
             ContactTitle = "";
 
-            var selectStatement = "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
-                                  "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
-                                  "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
-                                  "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier " +
-                                  "WHERE cust.CustomerIdentifier = @Id";
+            const string selectStatement = 
+                "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
+                "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
+                "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
+                "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier " +
+                "WHERE cust.CustomerIdentifier = @Id";
 
 
             using (var cn = new SqlConnection() { ConnectionString = ConnectionString })
@@ -321,16 +358,17 @@ namespace BackEndLibrary
         /// </summary>
         /// <param name="Customers"></param>
         /// <returns></returns>
-        public bool CustomersWithErrors3(out List<Customers> Customers)
+        public bool CustomersWithErrors3(out List<Customer> Customers)
         {
             mHasException = false;
 
-            Customers = new List<Customers>();
+            Customers = new List<Customer>();
 
-            var selectStatement = "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
-                                  "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
-                                  "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
-                                  "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier;";
+            const string selectStatement = 
+                "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
+                "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
+                "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
+                "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier;";
 
 
             using (var cn = new SqlConnection() { ConnectionString = ConnectionString })
@@ -343,7 +381,7 @@ namespace BackEndLibrary
                         var reader = cmd.ExecuteReader();
                         while (reader.Read())
                         {
-                            Customers.Add(new Customers()
+                            Customers.Add(new Customer()
                             {
                                 CustomerIdentifier = reader.GetInt32(0),
                                 CompanyName = reader.GetBoolean(1).ToString(), // deliberate use of wrong method to get CompanyName

@@ -2,7 +2,7 @@
 
 namespace BackEndLibrary
 {
-    public class Customers
+    public class Customer
     {
         public int CustomerIdentifier { get; set; }
         public string CompanyName { get; set; }

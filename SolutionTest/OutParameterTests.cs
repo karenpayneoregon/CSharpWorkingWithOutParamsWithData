@@ -152,7 +152,7 @@ namespace SolutionTest
             var ops = new DataOperations();
             var id = 999;
             // act
-            if (ops.CustomersSingleByOutParameterNoCustomer(id, out var customer))
+            if (ops.CustomerSingleByOutParameterNoCustomer(id, out var customer))
             {
                 Assert.IsTrue(customer.CompanyName == "Consolidated Holdings");
             }

@@ -42,8 +42,9 @@
   <ItemGroup>
     <Compile Include="BaseExceptionsHandler.cs" />
     <Compile Include="BaseSqlServerConnections.cs" />
-    <Compile Include="Customers.cs" />
+    <Compile Include="Customer.cs" />
     <Compile Include="DataOperations.cs" />
+    <Compile Include="Interfaces\IConnection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

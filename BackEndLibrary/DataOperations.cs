@@ -271,6 +271,51 @@ namespace BackEndLibrary
 
             return IsSuccessFul;
         }
+        public bool CustomersContactNameAndTitleByOutParameterDiscard(int pId, out string ContactName, out string ContactTitle)
+        {
+            mHasException = false;
+
+            ContactName = "";
+            ContactTitle = "";
+
+            var selectStatement = "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
+                                  "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
+                                  "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
+                                  "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier " +
+                                  "WHERE cust.CustomerIdentifier = @Id";
+
+
+            using (var cn = new SqlConnection() { ConnectionString = ConnectionString })
+            {
+                using (var cmd = new SqlCommand() { Connection = cn, CommandText = selectStatement })
+                {
+                    try
+                    {
+                        cmd.Parameters.AddWithValue("@Id", pId);
+                        cn.Open();
+                        var reader = cmd.ExecuteReader();
+                        reader.Read();
+                        if (reader.HasRows)
+                        {
+                            ContactName = reader.GetString(2);
+                            ContactTitle = reader.GetString(3);
+                        }
+                        else
+                        {
+                            return false;
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        mHasException = true;
+                        mLastException = e;
+                    }
+                }
+            }
+
+            return IsSuccessFul;
+        }
         /// <summary>
         /// Using C#7 Out parameter to return data from a database table into a list.
         /// </summary>

@@ -93,7 +93,52 @@ namespace SolutionTest
             }
             else
             {
-                Assert.IsTrue(1== 0, $"Expected to find customer with id of {id}");
+                Assert.IsTrue(1== 0, 
+                    $"Expected to find customer with id of {id}");
+            }
+        }
+        /// <summary>
+        /// Get contact name and title using two out parameters
+        /// </summary>
+        [TestMethod]
+        [TestTraits(Trait.Positive)]
+        public void GetContactNameAndTitleSingleCustomerByIdentifierUsingOutParameter()
+        {
+            // arrange
+            var ops = new DataOperations();
+            var id = 14;
+            // act
+            if (ops.CustomersContactNameAndTitleByOutParameterDiscard(id, out var firstName, out var lastName))
+            {
+                Assert.IsTrue(!string.IsNullOrWhiteSpace(firstName));
+            }
+            else
+            {
+                Assert.IsTrue(1 == 0,
+                    $"Expected to find customer with id of {id}");
+            }
+        }
+        /// <summary>
+        /// Get contact name where there are two out parameters, the second for title
+        /// is discarded (same as ValueTuple) by replacing the variable for title with
+        /// an underscore.
+        /// </summary>
+        [TestMethod]
+        [TestTraits(Trait.Positive)]
+        public void GetContactNameSingleCustomerByIdentifierUsingOutParameter()
+        {
+            // arrange
+            var ops = new DataOperations();
+            var id = 14;
+            // act
+            if (ops.CustomersContactNameAndTitleByOutParameterDiscard(id, out var firstName, out _))
+            {
+                Assert.IsTrue(!string.IsNullOrWhiteSpace(firstName));
+            }
+            else
+            {
+                Assert.IsTrue(1 == 0,
+                    $"Expected to find customer with id of {id}");
             }
         }
         /// <summary>
@@ -113,7 +158,8 @@ namespace SolutionTest
             }
             else
             {
-                Assert.IsTrue(customer == null,"Expected customer to be null");
+                Assert.IsTrue(customer == null,
+                    "Expected customer to be null");
             }
         }
         /// <summary>

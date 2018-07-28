@@ -13,7 +13,8 @@ namespace BackEndLibrary
         /// Name of database containing required tables
         /// </summary>
         protected string DefaultCatalog = "";
-        public string ConnectionString => $"Data Source={DatabaseServer};Initial Catalog={DefaultCatalog};Integrated Security=True";
+        public string ConnectionString => $"Data Source={DatabaseServer};"+ 
+                                          $"Initial Catalog={DefaultCatalog};Integrated Security=True";
     }
 
 }

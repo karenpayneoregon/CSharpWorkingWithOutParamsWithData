@@ -11,6 +11,10 @@ namespace BackEndLibrary
     /// <summary>
     /// Contains methods to return data, some methods are setup for failure
     /// to demonstrate how succcess and failures can be handled.
+    /// 
+    /// Same SELECT statement is used in each method, some methods warrent
+    /// less fields in the SELECT yet the purpose here is returning data and
+    /// not concerned here about too many fields.
     /// </summary>
     public class DataOperations : BaseSqlServerConnections
     {
@@ -301,13 +305,55 @@ namespace BackEndLibrary
             return IsSuccessFul;
         }
         /// <summary>
+        /// Get a single customer using ValueTuple. This method does the job yet we are better off
+        /// using out parameters or conventional methods to return data.
+        /// </summary>
+        /// <param name="pId"></param>
+        /// <returns></returns>
+        public (bool Success, string ContactName, string ContactTitle) CustomerContactNameTitleUsingTuples(int pId)
+        {
+            mHasException = false;
+
+            const string selectStatement =
+                "SELECT cust.CustomerIdentifier,cust.CompanyName,cust.ContactName,ct.ContactTitle, " +
+                "cust.[Address] AS street,cust.City,cust.PostalCode,cust.Country,cust.Phone, " +
+                "cust.ContactTypeIdentifier FROM dbo.Customers AS cust " +
+                "INNER JOIN ContactType AS ct ON cust.ContactTypeIdentifier = ct.ContactTypeIdentifier " +
+                "WHERE cust.CustomerIdentifier = @Id";
+
+
+            using (var cn = new SqlConnection() { ConnectionString = ConnectionString })
+            {
+                using (var cmd = new SqlCommand() { Connection = cn, CommandText = selectStatement })
+                {
+                    try
+                    {
+                        cmd.Parameters.AddWithValue("@Id", pId);
+                        cn.Open();
+                        var reader = cmd.ExecuteReader();
+                        reader.Read();
+                        return reader.HasRows ? (true, reader.GetString(2), reader.GetString(3)) : (false, "", "");
+                    }
+                    catch (Exception e)
+                    {
+                        mHasException = true;
+                        mLastException = e;
+                    }
+                }
+            }
+
+            return (IsSuccessFul, "","");
+
+        }
+
+        /// <summary>
         /// Retrieve contact name and title by primary key
         /// </summary>
         /// <param name="pId">Customer primary key</param>
         /// <param name="ContactName"><see cref="Customer.ContactName"/> for pId</param>
         /// <param name="ContactTitle"><see cref="Customer.ContactTitle"/> for pId</param>
         /// <returns>True if found, false if not found.</returns>
-        public bool CustomersContactNameAndTitleByOutParameterDiscard(int pId, out string ContactName, out string ContactTitle)
+        public bool CustomerContactNameAndTitleByOutParameterDiscard(int pId, out string ContactName, out string ContactTitle)
         {
             mHasException = false;
 

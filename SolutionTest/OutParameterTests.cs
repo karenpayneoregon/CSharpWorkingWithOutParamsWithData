@@ -108,7 +108,7 @@ namespace SolutionTest
             var ops = new DataOperations();
             var id = 14;
             // act
-            if (ops.CustomersContactNameAndTitleByOutParameterDiscard(id, out var firstName, out var lastName))
+            if (ops.CustomerContactNameAndTitleByOutParameterDiscard(id, out var firstName, out var lastName))
             {
                 Assert.IsTrue(!string.IsNullOrWhiteSpace(firstName));
             }
@@ -131,7 +131,7 @@ namespace SolutionTest
             var ops = new DataOperations();
             var id = 14;
             // act
-            if (ops.CustomersContactNameAndTitleByOutParameterDiscard(id, out var firstName, out _))
+            if (ops.CustomerContactNameAndTitleByOutParameterDiscard(id, out var firstName, out _))
             {
                 Assert.IsTrue(!string.IsNullOrWhiteSpace(firstName));
             }
@@ -200,6 +200,36 @@ namespace SolutionTest
                 Assert.IsTrue(ops.HasException,
                     "Expected an exception from returning a list");
             }
+        }
+        /// <summary>
+        /// Demonstration for ValueTuple to return a customer by primary key.
+        /// </summary>
+        [TestMethod]
+        [TestTraits(Trait.Positive)]
+        public void GetSingleCustomerUsingValueTuple()
+        {
+            // arrange
+            var ops = new DataOperations();
+            var id = 1;
+            // act
+            var (Success, _, _) = ops.CustomerContactNameTitleUsingTuples(id);
+            // assert
+            Assert.IsTrue(Success);
+        }
+        /// <summary>
+        /// Negative test to the method above for validation
+        /// </summary>
+        [TestMethod]
+        [TestTraits(Trait.Negative)]
+        public void GetSingleCustomerUsingValueTupleNotFound()
+        {
+            // arrange
+            var ops = new DataOperations();
+            var id = 991;
+            // act
+            var (Success, _, _) = ops.CustomerContactNameTitleUsingTuples(id);
+            // assert
+            Assert.IsFalse(Success);
         }
     }
 }

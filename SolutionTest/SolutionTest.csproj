@@ -53,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TestTraitsAttribute.cs" />
-    <Compile Include="OutParameterTests.cs" />
+    <Compile Include="OutParameterTuplesTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

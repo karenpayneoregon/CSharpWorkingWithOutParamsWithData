@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using BackEndLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -19,9 +20,10 @@ namespace SolutionTest
     /// https://dailydotnettips.com/back-to-basics-what-is-the-difference-between-ref-and-out-keyword-in-c/
     /// 
     /// 
+    /// https://social.technet.microsoft.com/wiki/contents/articles/37675.c-7-0-out-parameter.aspx
     /// </summary>
     [TestClass]
-    public class OutParameterTests
+    public class OutParameterTuplesTests
     {
         /// <summary>
         /// Conventional returning of data via a DataTable where the 
@@ -79,6 +81,25 @@ namespace SolutionTest
 
             }
         }
+        /// <summary>
+        /// Here the SQL SELECT does not account for null in PostalCode which
+        /// means only a sub-set of data is returned. All the other methods
+        /// account for this using ISNULL(cust.PostalCode,'').
+        /// </summary>
+        [TestMethod]
+        [TestTraits(Trait.Negative)]
+        public void GetCustomerDataTablesWithAssertionFromMethodReturn_WithNullValueException()
+        {
+            // arrange
+            var ops = new DataOperations();
+            // act
+            if (!ops.CustomersWithErrors3(out var customerList))
+            {
+                // assert - there are 91 records
+                Assert.IsTrue(customerList.Count == 64,
+                    "Expected records in the list");
+            }
+        }
         [TestMethod]
         [TestTraits(Trait.Positive)]
         public void GetSingleCustomerByIdentifierUsingOutParameter()
@@ -86,6 +107,7 @@ namespace SolutionTest
             // arrange
             var ops = new DataOperations();
             var id = 14;
+
             // act
             if (ops.CustomersSingleByOutParameter(id,out var customer))
             {
@@ -107,6 +129,7 @@ namespace SolutionTest
             // arrange
             var ops = new DataOperations();
             var id = 14;
+
             // act
             if (ops.CustomerContactNameAndTitleByOutParameterDiscard(id, out var firstName, out var lastName))
             {
@@ -130,6 +153,7 @@ namespace SolutionTest
             // arrange
             var ops = new DataOperations();
             var id = 14;
+
             // act
             if (ops.CustomerContactNameAndTitleByOutParameterDiscard(id, out var firstName, out _))
             {
@@ -150,7 +174,8 @@ namespace SolutionTest
         {
             // arrange
             var ops = new DataOperations();
-            var id = 999;
+            var id = 999; // table does not have CustomerIdentifier
+
             // act
             if (ops.CustomerSingleByOutParameterNoCustomer(id, out var customer))
             {
@@ -172,6 +197,7 @@ namespace SolutionTest
         {
             // arrange
             var ops = new DataOperations();
+
             // act
             if (ops.Customers3(out var customerList))
             {
@@ -189,6 +215,7 @@ namespace SolutionTest
         {
             // arrange
             var ops = new DataOperations();
+
             // act
             if (ops.Customers3(out var customerList))
             {
@@ -203,6 +230,7 @@ namespace SolutionTest
         }
         /// <summary>
         /// Demonstration for ValueTuple to return a customer by primary key.
+        /// Discards are used as the contact name and title are not required.
         /// </summary>
         [TestMethod]
         [TestTraits(Trait.Positive)]
@@ -210,14 +238,19 @@ namespace SolutionTest
         {
             // arrange
             var ops = new DataOperations();
+
             var id = 1;
+
             // act
+            // ReSharper disable once InconsistentNaming
             var (Success, _, _) = ops.CustomerContactNameTitleUsingTuples(id);
+
             // assert
             Assert.IsTrue(Success);
         }
         /// <summary>
         /// Negative test to the method above for validation
+        /// Discards are used as the contact name and title are not required.
         /// </summary>
         [TestMethod]
         [TestTraits(Trait.Negative)]
@@ -225,11 +258,36 @@ namespace SolutionTest
         {
             // arrange
             var ops = new DataOperations();
-            var id = 991;
+            var id = 991; // CustomerIdentifier does not exist
+
             // act
+            // ReSharper disable once InconsistentNaming
             var (Success, _, _) = ops.CustomerContactNameTitleUsingTuples(id);
+
             // assert
             Assert.IsFalse(Success);
+        }
+        /// <summary>
+        /// Positive test to return a named tuple of bool, list of Customer.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        [TestTraits(Trait.Positive)]
+        public async Task GetCustomersWithTupleAsync()
+        {
+            // arrange
+            var ops = new DataOperations();
+
+            // act
+            var resultsValueTuple = await ops.GetSCustomersUsingTuplesAsync()
+                .ConfigureAwait(false);
+
+            // assert
+            Assert.IsTrue(resultsValueTuple.Success,
+                "Expected async to function to return customers");
+
+            Assert.IsTrue(resultsValueTuple.Customers.Count == 91,
+                "Expected 91 customers");
         }
     }
 }

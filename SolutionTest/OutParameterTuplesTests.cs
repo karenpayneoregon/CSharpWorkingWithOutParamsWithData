@@ -243,8 +243,10 @@ namespace SolutionTest
 
             // act
             // ReSharper disable once InconsistentNaming
-            var (Success, _, _) = ops.CustomerContactNameTitleUsingTuples(id);
+            var (Success, contactName, contactTitle) = ops.CustomerContactNameTitleUsingTuples(id);
 
+            // no assertion, simply showing returning data.
+            Console.WriteLine($"{contactName}, {contactTitle}");
             // assert
             Assert.IsTrue(Success);
         }

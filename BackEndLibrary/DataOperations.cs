@@ -24,7 +24,7 @@ namespace BackEndLibrary
             DefaultCatalog = "NorthWindAzure";
         }
         /// <summary>
-        /// Conventional method to return data from a database table into a DataTable.
+        /// Conventional method to return data from a database table into a <see cref="DataTable"/>.
         /// </summary>
         /// <returns></returns>
         public DataTable Customers1()
@@ -59,7 +59,7 @@ namespace BackEndLibrary
             return dt;
         }
         /// <summary>
-        /// Using C#7 Out parameter to return data from a database table into a DataTable.
+        /// Using C#7 Out parameter to return data from a database table into a <see cref="DataTable"/>.
         /// </summary>
         /// <param name="dtCustomers">DataTable</param>
         /// <returns>True when DataTable is loaded, false on failure</returns>
@@ -100,7 +100,7 @@ namespace BackEndLibrary
         /// 
         /// Exception thrown will be Invalid column name 'CustomerIdentifer'.
         /// </summary>
-        /// <param name="dtCustomers">DataTable which in this case will never load.</param>
+        /// <param name="dtCustomers"><see cref="DataTable"/>. which in this case will never load.</param>
         /// <returns>Hardwired to return false</returns>
         public bool CustomersWithError2(out DataTable dtCustomers)
         {
@@ -244,7 +244,7 @@ namespace BackEndLibrary
             return IsSuccessFul;
         }
         /// <summary>
-        /// Rigged to fail on getting a customer
+        /// Rigged to fail on getting a <see cref="Customer"/>
         /// </summary>
         /// <param name="pId"></param>
         /// <param name="Customer"></param>
@@ -303,7 +303,7 @@ namespace BackEndLibrary
             return IsSuccessFul;
         }
         /// <summary>
-        /// Get a single customer using ValueTuple. This method does the job yet we are better off
+        /// Get a single customer using <see cref="ValueTuple"/>. This method does the job yet we are better off
         /// using out parameters or conventional methods to return data.
         /// </summary>
         /// <param name="pId"></param>
@@ -397,7 +397,7 @@ namespace BackEndLibrary
         }
         /// <summary>
         /// Using C#7 Out parameter to return data from a database table into a list.
-        /// In this case there is an error on PostalCode throwing an exception on one
+        /// In this case there is an error on <see cref="Customer.PostalCode"/> throwing an exception on one
         /// or more records with null values.
         /// </summary>
         /// <param name="Customers"></param>
@@ -449,6 +449,13 @@ namespace BackEndLibrary
 
             return IsSuccessFul;
         }
+        /// <summary>
+        /// Demonstrates using a Tuple to return success and a list of <see cref="Customer"/> asynochronously.
+        /// Possibilities are, success, all customers are returned, failure can be no customers
+        /// returned or some customers dependent on an exception e.g. connection failure, null
+        /// values etc.
+        /// </summary>
+        /// <returns><see cref="ValueTuple"/> Success of operation and customer list</returns>
         public async Task<(bool Success, List<Customer> Customers)> GetSCustomersUsingTuplesAsync()
         {
             mHasException = false;
@@ -499,6 +506,8 @@ namespace BackEndLibrary
                         }
                     }
 
+                    // IsSuccessFul equates to returning all data, no data or partial data
+                    // customerList will contain, no customers, some customers, all customers
                     return (IsSuccessFul, customersList);
 
                 }).ConfigureAwait(false);

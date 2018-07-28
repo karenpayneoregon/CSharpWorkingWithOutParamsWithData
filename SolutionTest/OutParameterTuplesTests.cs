@@ -5,23 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SolutionTest
 {
-    /// <summary>
-    /// Disucss alternates e.g. using a ValueTuple - deconstruction, a class instance???
-    /// 
-    /// https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/out-parameter-modifier
-    /// https://csharp-station.com/ref-parameters-vs-out-parameters
-    /// 
-    /// ou should generally prefer a return value over an out param. Out params are a neccissary evil 
-    /// if you find yourself writing code that needs to do 2 things. A good example of this is the Try 
-    /// pattern (such as Int32.TryParse).
-    /// 
-    /// https://www.codeproject.com/Tips/1175809/Csharp-New-Inline-Out-Variables
-    /// 
-    /// https://dailydotnettips.com/back-to-basics-what-is-the-difference-between-ref-and-out-keyword-in-c/
-    /// 
-    /// 
-    /// https://social.technet.microsoft.com/wiki/contents/articles/37675.c-7-0-out-parameter.aspx
-    /// </summary>
+   
     [TestClass]
     public class OutParameterTuplesTests
     {

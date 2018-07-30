@@ -7,7 +7,7 @@
 <p><a href="https://social.technet.microsoft.com/profile/kareninstructor/">TechNet: C# 7 new methods for returning data with out parameters and ValueTuple</a></p>
 
 <p>ValueTuple</p>
-'''csharp
+'''
 public async Task<(bool Success, List<Customer> Customers)> GetSCustomersUsingTuplesAsync()
 {
     mHasException = false;
@@ -68,7 +68,7 @@ public async Task<(bool Success, List<Customer> Customers)> GetSCustomersUsingTu
 }
 '''
 <p>Out parameter</p>
-'''csharp
+'''
 public bool Customers3(out List<Customer> Customers)
 {
     mHasException = false;

@@ -7,6 +7,7 @@
 <p><a href="https://social.technet.microsoft.com/wiki/contents/articles/51741.c-7-new-methods-for-returning-data-with-out-parameters-and-valuetuple.aspx">TechNet: C# 7 new methods for returning data with out parameters and ValueTuple</a></p>
 
 <p>ValueTuple</p>
+
 ```csharp
 
 public async Task<(bool Success, List<Customer> Customers)> GetSCustomersUsingTuplesAsync()
@@ -67,7 +68,6 @@ public async Task<(bool Success, List<Customer> Customers)> GetSCustomersUsingTu
 
     return results;
 }
-
 ```
 
 <p>Out parameter</p>

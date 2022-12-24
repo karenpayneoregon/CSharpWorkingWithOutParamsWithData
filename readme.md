@@ -7,7 +7,7 @@
 <p><a href="https://social.technet.microsoft.com/wiki/contents/articles/51741.c-7-new-methods-for-returning-data-with-out-parameters-and-valuetuple.aspx">TechNet: C# 7 new methods for returning data with out parameters and ValueTuple</a></p>
 
 <p>ValueTuple</p>
-<pre><code class='language-cs'>
+```csharp
 
 public async Task<(bool Success, List<Customer> Customers)> GetSCustomersUsingTuplesAsync()
 {
@@ -68,10 +68,11 @@ public async Task<(bool Success, List<Customer> Customers)> GetSCustomersUsingTu
     return results;
 }
 
-</code></pre>
+```
 
 <p>Out parameter</p>
-<pre><code class='language-cs'>
+
+```csharp
 
 public bool Customers3(out List<Customer> Customers)
 {
@@ -120,4 +121,4 @@ public bool Customers3(out List<Customer> Customers)
 
     return IsSuccessFul;
 }
-</code></pre>
+```
